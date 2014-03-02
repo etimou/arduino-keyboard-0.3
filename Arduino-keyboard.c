@@ -69,6 +69,15 @@
 
 #include "Arduino-keyboard.h"
 
+
+uint8_t keyNone[8] = { 0, 0, 0, 0, 0, 0, 0 };
+uint8_t keyS[8] = { 0, 0, 22, 0, 0, 0, 0 };
+uint8_t keyA[8] = { 0, 0, 20, 0, 0, 0, 0 };
+uint8_t keyL[8] = { 0, 0, 15, 0, 0, 0, 0 };
+uint8_t keyU[8] = { 0, 0, 24, 0, 0, 0, 0 };
+uint8_t keyT[8] = { 0, 0, 23, 0, 0, 0, 0 };
+int num = 0;
+
 /** Buffer to hold the previously generated Keyboard HID report, for comparison purposes inside the HID class driver. */
 uint8_t PrevKeyboardHIDReportBuffer[sizeof(USB_KeyboardReport_Data_t)];
 
@@ -148,6 +157,8 @@ void SetupHardware(void)
 	UCSR1C = ((1 << UCSZ11) | (1 << UCSZ10));
 	UCSR1A = (1 << U2X1);
 	UCSR1B = ((1 << RXCIE1) | (1 << TXEN1) | (1 << RXEN1));
+
+        LEDs_Init();
 }
 
 /** Event handler for the library USB Connection event. */
@@ -201,7 +212,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(
     void* ReportData,
     uint16_t* const ReportSize)
 {
-	uint8_t *datap = ReportData;
+/*	uint8_t *datap = ReportData;
 	int ind;
 
 	RingBuff_Count_t BufferCount = RingBuffer_GetCount(&USARTtoUSB_Buffer);
@@ -211,7 +222,7 @@ bool CALLBACK_HID_Device_CreateHIDReport(
 		keyboardData[ind] = RingBuffer_Remove(&USARTtoUSB_Buffer);
 	    }
 
-	    /* Send an led status byte back for every keyboard report received */
+	    /* Send an led status byte back for every keyboard report received *//*
 	    Serial_TxByte(ledReport);
 	}
 
@@ -221,6 +232,84 @@ bool CALLBACK_HID_Device_CreateHIDReport(
 
 	*ReportSize = sizeof(USB_KeyboardReport_Data_t);
 	return false;
+*/
+    uint8_t *datap = ReportData;
+    int ind;
+
+    if (num == 1000 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyNone[ind];
+	}
+    }
+    if (num == 1001 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyS[ind];
+	}
+    }
+    if (num == 1002 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyNone[ind];
+	}
+    }
+    if (num == 1003 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyA[ind];
+	}
+    }
+    if (num == 1004 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyNone[ind];
+	}
+    }
+    if (num == 1005 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyL[ind];
+	}
+    }
+    if (num == 1006 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyNone[ind];
+	}
+    }
+    if (num == 1007 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyU[ind];
+	}
+    }
+    if (num == 1008 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyNone[ind];
+	}
+    }
+    if (num == 1009 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyT[ind];
+	}
+    }
+    if (num == 1010 )
+    {
+	for (ind=0; ind<8; ind++) {
+	datap[ind] = keyNone[ind];
+	}
+    }
+    if (num<1010) num++;
+
+ 
+
+
+    *ReportSize = sizeof(USB_KeyboardReport_Data_t);
+    return false;
+
 }
 
 /** HID class driver callback function for the processing of HID reports from the host.
